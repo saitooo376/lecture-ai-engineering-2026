@@ -13,6 +13,7 @@
 """
 
 import argparse
+import time
 
 from google import genai
 from google.genai import errors
@@ -36,6 +37,8 @@ def print_usage(response) -> None:
 
 
 def ask(question: str, chat=None) -> str:
+    started_at = time.perf_counter()
+
     if chat is None:
         client = genai.Client(api_key=get_api_key())
         response = client.models.generate_content(
@@ -46,6 +49,8 @@ def ask(question: str, chat=None) -> str:
     else:
         response = chat.send_message(question)
 
+    elapsed = time.perf_counter() - started_at
+    print(f'[応答時間] {elapsed:.2f}秒')
     print_usage(response)
     return response.text
 
