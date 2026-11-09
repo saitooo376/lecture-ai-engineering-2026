@@ -39,6 +39,16 @@ def test_lecture_summary():
     assert "まだありません" in tools.get_lecture_summary(99)
 
 
+def test_save_learning_log_writes_to_ignored_learning_log_directory(tmp_path, monkeypatch):
+    monkeypatch.setattr(tools, "DATA_DIR", tmp_path / "data")
+
+    result = tools.save_learning_log("今日の学習メモ")
+
+    log_file = tmp_path / "learning_log" / "learning_log.txt"
+    assert log_file.read_text(encoding="utf-8") == "今日の学習メモ\n"
+    assert "保存しました" in result
+
+
 def test_default_question_of_lecture1_is_answerable_from_glossary():
     """第1回の既定の質問（app.ask）は、第3回のエージェントが用語集で正しく答えられること。"""
     from app.ask import DEFAULT_QUESTION

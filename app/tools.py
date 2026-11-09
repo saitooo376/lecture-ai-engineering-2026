@@ -7,6 +7,7 @@
 import json
 from functools import cache
 from pathlib import Path
+import random
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 MAX_RESULTS = 3
@@ -77,3 +78,39 @@ def get_lecture_summary(lecture: int) -> str:
         available = sorted(p.stem for p in (DATA_DIR / "lectures").glob("*.md"))
         return f"第{lecture}回の要点はまだありません。用意されている回: {', '.join(available)}"
     return path.read_text(encoding="utf-8")
+
+def make_quiz(lecture: int) -> str:
+    """指定した回の用語から１つを選び、
+    確認問題と答えを返す
+
+    「第2回の確認問題を出して」のように、
+    問題を求められたときに使う。
+    """
+    terms = [term for term in load_glossary() if term["lecture"] == lecture]
+    if not terms:
+        return f"第{lecture}回の用語は用語集にありません。"
+
+    term = random.choice(terms)
+    return json.dumps(
+        {
+            "question": f"「{term['term']}」の意味は？",
+            "answer": term["definition"],
+        },
+        ensure_ascii=False,
+    )
+
+
+def save_learning_log(content: str) -> str:
+    """学習の記録やメモをファイルに保存する。
+
+    ユーザーが学習内容の保存やメモの記録を求めたときに使う。
+    """
+    log_dir = DATA_DIR.parent / "learning_log"
+    log_dir.mkdir(exist_ok=True)
+    log_file = log_dir / "learning_log.txt"
+    
+    # 既存のログに追記
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(content + "\n")
+    
+    return f"学習ログを保存しました: {content}"
