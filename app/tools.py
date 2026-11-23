@@ -69,7 +69,7 @@ def search_glossary(query: str) -> str:
         ensure_ascii=False,
     )
 
-ef make_quiz(lecture: int) -> str:
+def make_quiz(lecture: int) -> str:
     """指定した回の用語から１つを選び、
     確認問題と答えを返す
 
