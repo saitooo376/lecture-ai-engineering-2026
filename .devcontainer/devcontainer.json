@@ -1,6 +1,10 @@
 {
   "name": "AIE2026",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "runArgs": [
+    "--env-file",
+    "${localWorkspaceFolder}/.env"
+  ],
   "features": {
     // 第3回の Pi デモ・発展課題用
     "ghcr.io/devcontainers/features/node:1": { "version": "lts" }
